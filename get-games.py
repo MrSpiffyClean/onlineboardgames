@@ -75,7 +75,7 @@ def vassal():
 def happymeeple():
     base_url = "https://www.happymeeple.com/en/"
     soup = getsoup(base_url)
-    elements = soup.find("div", {"class": "main_div_invisible"}).findAll("id", {"class": "pres_game"})
+    elements = soup.find("div", {"class": "main_div_invisible"}).findAll("div", {"class": "pres_game"})
     games = {}
     for item in elements:
         name = item.div["title"].strip().title()
