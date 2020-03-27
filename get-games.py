@@ -83,6 +83,11 @@ def happymeeple():
         games[name] = url
     return games
 
+def tabletopia():
+    base_url = "https://tabletopia.com"
+    games = {}
+    return games
+
 def games_list(sites):
     games = {}
     for site in sites:
@@ -116,6 +121,7 @@ sites["Board Game Arena (Rules Enforced)"] = bga()
 sites["Boiteajeux (Rules Enforced)"] = boiteajeux()
 sites["Happy Meeple (Rules Enforced)"] = happymeeple()
 sites["VASSAL (No Rules Enforcement)"] = vassal()
+sites["Tabletopia (No Rules Enforcement)"] = tabletopia()
 
 # add "manual" lists for smaller sites
 sites["SlothNinja (Rules Enforced)"] = {
@@ -131,7 +137,13 @@ sites["BoardGamePlay (Rules Enforced)"] = {
     "Montana": "https://boardgameplay.com/",
     "Urbino": "https://boardgameplay.com/"
     }
-sites["BoardGamingOnline"] = {
+sites["Boardgamecore (Rules Enforced)"] = {
+    "Antiquity": "http://play.boardgamecore.net/",
+    "Food Chain Magnate": "http://play.boardgamecore.net/",
+    "The Great Zimbabwe": "http://play.boardgamecore.net/",
+    "Wir sind das Volk!": "http://play.boardgamecore.net/"
+    }
+sites["BoardGamingOnline (Rules Enforced)"] = {
     "Through the Ages: A Story of Civilization": "http://www.boardgaming-online.com/",
     "Through The Ages: A New Story of Civilization": "http://www.boardgaming-online.com/"
     }
@@ -145,9 +157,10 @@ sites["MaBi Web (Rules Enforced)"] = {
     "In the Shadow of the Emperor": "http://www.mabiweb.com/modules.php?name=GM_ShadowEmperor&op=description",
     "Richelieu": "http://www.mabiweb.com/modules.php?name=GM_Richelieu&op=description"
     }
-sites["Online Terra Mystica"] = {"Terra Mystica": "https://terra.snellman.net/"}
-sites["Orderofthehammer"] = {"Brass": "http://brass.orderofthehammer.com/"}
-sites["Web Diplomacy"] = {"Diplomacy": "https://www.webdiplomacy.net/"}
+sites["Online Terra Mystica (Rules Enforced)"] = {"Terra Mystica": "https://terra.snellman.net/"}
+sites["rr18xx (Rules Enforced)"] = {"18xx": "http://www.rr18xx.com"}
+sites["Orderofthehammer (Rules Enforced)"] = {"Brass": "http://brass.orderofthehammer.com/"}
+sites["Web Diplomacy (Rules Enforced)"] = {"Diplomacy": "https://www.webdiplomacy.net/"}
 
 games = games_list(sites)
 table = create_table(games)
