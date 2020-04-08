@@ -3,36 +3,8 @@ from os import path
 import pprint
 import requests
 from bs4 import BeautifulSoup
-
-def getsoup(url):
-    page = requests.get(url)
-    if page.status_code == 200:
-        soup = BeautifulSoup(page.text, "html.parser")
-        return soup
-    else:
-        return None
-
-def yucata():
-    base_url = "https://www.yucata.de"
-    soup = getsoup(base_url)
-    elements = soup.find("table", {"id": "ctl00_cphRightCol_dlAllGames"}).findAll("a")
-    games = {}
-    for item in elements:
-        name = item.text.strip().title()
-        url = base_url + item.attrs["href"]
-        games[name] = url
-    return games
-
-def boiteajeux():
-    base_url = "http://boiteajeux.net/index.php?p=regles"
-    soup = getsoup(base_url)
-    elements = soup.find("div", {"class": "span7"}).findAll("div", {"class": "jeuxRegles"})
-    games = {}
-    for item in elements:
-        name = item.text.strip().split("\n")[0].title()
-        url = "http://boiteajeux.net"
-        games[name] = url
-    return games
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 def bga():
     base_url = "https://boardgamearena.com/gamelist"
@@ -49,6 +21,46 @@ def bga():
         #url = base_url[:-9] + item.attrs["href"]
         url = item.attrs["href"]
         games[name] = url
+    return games
+
+def boiteajeux():
+    base_url = "http://boiteajeux.net/index.php?p=regles"
+    soup = getsoup(base_url)
+    elements = soup.find("div", {"class": "span7"}).findAll("div", {"class": "jeuxRegles"})
+    games = {}
+    for item in elements:
+        name = item.text.strip().split("\n")[0].title()
+        url = "http://boiteajeux.net"
+        games[name] = url
+    return games
+
+def happymeeple():
+    base_url = "https://www.happymeeple.com/en/"
+    soup = getsoup(base_url)
+    elements = soup.find("div", {"class": "main_div_invisible"}).findAll("div", {"class": "pres_game"})
+    games = {}
+    for item in elements:
+        name = item.div["title"].strip().title()
+        url = item.a.attrs["href"]
+        games[name] = url
+    return games
+
+def tabletopia():
+    next_page = "https://tabletopia.com/games?"
+    driver = webdriver.Chrome()
+    games = {}
+    while next_page is not None:    
+        elements = driver.find_elements_by_class_name("item__bottom._more-offset")
+        for item in elements:
+            name = item.text.strip().title()
+            url = item.find_element_by_class_name("item__button.button").get_attribute("href")
+            games[name] = url
+        nav = driver.find_elements_by_class_name("pagination__item")
+        if "disabled" in nav[-1].get_attribute("class"):
+            next_page = None
+        else:
+            nav[-1].click()
+    driver.close()
     return games
 
 def vassal():
@@ -72,21 +84,24 @@ def vassal():
                 next_page = None
     return games
 
-def happymeeple():
-    base_url = "https://www.happymeeple.com/en/"
+def yucata():
+    base_url = "https://www.yucata.de"
     soup = getsoup(base_url)
-    elements = soup.find("div", {"class": "main_div_invisible"}).findAll("div", {"class": "pres_game"})
+    elements = soup.find("table", {"id": "ctl00_cphRightCol_dlAllGames"}).findAll("a")
     games = {}
     for item in elements:
-        name = item.div["title"].strip().title()
-        url = item.a.attrs["href"]
+        name = item.text.strip().title()
+        url = base_url + item.attrs["href"]
         games[name] = url
     return games
 
-def tabletopia():
-    base_url = "https://tabletopia.com"
-    games = {}
-    return games
+def getsoup(url):
+    page = requests.get(url)
+    if page.status_code == 200:
+        soup = BeautifulSoup(page.text, "html.parser")
+        return soup
+    else:
+        return None
 
 def games_list(sites):
     games = {}
@@ -115,33 +130,37 @@ def create_table(games):
         table += line + "\n"
     return table
 
+# list of sites
+# implemented:
+#   BoardGameArena, Boardgamecore, BoardGamePlay, BoardGamingOnline, Boiteajeux,
+#   Happy Meeple, MaBi Web, Online Terra Mystica, Orderofthehammer, rr18xx,
+#   SlothNinja, VASSAL, Web Diplomacy, Yucata
+# not finished:
+#   Tabletopia
+# to implement:
+#   http://www.brettspielwelt.de/Spiele/?nation=en, https://triqqy.com/#/games
+#   TTS official, TTS workshop (https://steamcommunity.com/workshop/browse/?appid=286160)
+
 sites = {}
-sites["Yucata (Rules Enforced)"] = yucata()
 sites["Board Game Arena (Rules Enforced)"] = bga()
 sites["Boiteajeux (Rules Enforced)"] = boiteajeux()
 sites["Happy Meeple (Rules Enforced)"] = happymeeple()
+#sites["Tabletopia (No Rules Enforcement)"] = tabletopia()
 sites["VASSAL (No Rules Enforcement)"] = vassal()
-sites["Tabletopia (No Rules Enforcement)"] = tabletopia()
+sites["Yucata (Rules Enforced)"] = yucata()
 
-# add "manual" lists for smaller sites
-sites["SlothNinja (Rules Enforced)"] = {
-    "After The Flood": "https://www.slothninja.com/",
-    "Confucius": "https://www.slothninja.com/",
-    "Guild of Thieves": "https://www.slothninja.com/",
-    "Indonesia": "https://www.slothninja.com/",
-    "Tammany Hall": "https://www.slothninja.com/"
+# "manual" lists for smaller sites
+sites["Boardgamecore (Rules Enforced)"] = {
+    "Antiquity": "http://play.boardgamecore.net/",
+    "Food Chain Magnate": "http://play.boardgamecore.net/",
+    "The Great Zimbabwe": "http://play.boardgamecore.net/",
+    "Wir sind das Volk!": "http://play.boardgamecore.net/"
     }
 sites["BoardGamePlay (Rules Enforced)"] = {
     "Rurik: Dawn of Kiev": "https://boardgameplay.com/",
     "The Manhattan Project: Energy Empire": "https://boardgameplay.com/",
     "Montana": "https://boardgameplay.com/",
     "Urbino": "https://boardgameplay.com/"
-    }
-sites["Boardgamecore (Rules Enforced)"] = {
-    "Antiquity": "http://play.boardgamecore.net/",
-    "Food Chain Magnate": "http://play.boardgamecore.net/",
-    "The Great Zimbabwe": "http://play.boardgamecore.net/",
-    "Wir sind das Volk!": "http://play.boardgamecore.net/"
     }
 sites["BoardGamingOnline (Rules Enforced)"] = {
     "Through the Ages: A Story of Civilization": "http://www.boardgaming-online.com/",
@@ -158,8 +177,15 @@ sites["MaBi Web (Rules Enforced)"] = {
     "Richelieu": "http://www.mabiweb.com/modules.php?name=GM_Richelieu&op=description"
     }
 sites["Online Terra Mystica (Rules Enforced)"] = {"Terra Mystica": "https://terra.snellman.net/"}
-sites["rr18xx (Rules Enforced)"] = {"18xx": "http://www.rr18xx.com"}
 sites["Orderofthehammer (Rules Enforced)"] = {"Brass": "http://brass.orderofthehammer.com/"}
+sites["rr18xx (Rules Enforced)"] = {"18xx": "http://www.rr18xx.com"}
+sites["SlothNinja (Rules Enforced)"] = {
+    "After The Flood": "https://www.slothninja.com/",
+    "Confucius": "https://www.slothninja.com/",
+    "Guild of Thieves": "https://www.slothninja.com/",
+    "Indonesia": "https://www.slothninja.com/",
+    "Tammany Hall": "https://www.slothninja.com/"
+    }
 sites["Web Diplomacy (Rules Enforced)"] = {"Diplomacy": "https://www.webdiplomacy.net/"}
 
 games = games_list(sites)
