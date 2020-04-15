@@ -120,9 +120,7 @@ def create_table(games):
 # implemented:
 #   BoardGameArena, Boardgamecore, BoardGamePlay, BoardGamingOnline, Boiteajeux,
 #   Happy Meeple, MaBi Web, Online Terra Mystica, Orderofthehammer, rr18xx,
-#   SlothNinja, VASSAL, Web Diplomacy, Yucata
-# not finished:
-#   Tabletopia
+#   SlothNinja, VASSAL, Web Diplomacy, Yucata, Tabletopia
 # to implement:
 #   http://www.brettspielwelt.de/Spiele/?nation=en, https://triqqy.com/#/games
 #   TTS official, TTS workshop (https://steamcommunity.com/workshop/browse/?appid=286160)
@@ -131,7 +129,7 @@ sites = {}
 sites["Board Game Arena (Rules Enforced)"] = bga()
 sites["Boiteajeux (Rules Enforced)"] = boiteajeux()
 sites["Happy Meeple (Rules Enforced)"] = happymeeple()
-#sites["Tabletopia (No Rules Enforcement)"] = tabletopia()
+sites["Tabletopia (No Rules Enforcement)"] = tabletopia()
 sites["VASSAL (No Rules Enforcement)"] = vassal()
 sites["Yucata (Rules Enforced)"] = yucata()
 
