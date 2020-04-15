@@ -1,10 +1,11 @@
 import os.path
 from os import path
 import pprint
+
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+
+import tabletopia
 
 def bga():
     base_url = "https://boardgamearena.com/gamelist"
@@ -46,22 +47,7 @@ def happymeeple():
     return games
 
 def tabletopia():
-    next_page = "https://tabletopia.com/games?"
-    driver = webdriver.Chrome()
-    games = {}
-    while next_page is not None:    
-        elements = driver.find_elements_by_class_name("item__bottom._more-offset")
-        for item in elements:
-            name = item.text.strip().title()
-            url = item.find_element_by_class_name("item__button.button").get_attribute("href")
-            games[name] = url
-        nav = driver.find_elements_by_class_name("pagination__item")
-        if "disabled" in nav[-1].get_attribute("class"):
-            next_page = None
-        else:
-            nav[-1].click()
-    driver.close()
-    return games
+    return tabletopia.main()
 
 def vassal():
     base_url = "http://www.vassalengine.org"
